@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { getGeminiClient, jsonError } from './_gemini';
+import { getGeminiClient, jsonError } from './_gemini.js';
 
 // Map voice gender + style to Gemini TTS voice names
 const VOICE_MAP: Record<string, Record<string, string>> = {
