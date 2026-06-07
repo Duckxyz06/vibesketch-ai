@@ -1,0 +1,6 @@
+{
+  "name": "VibeSketch AI",
+  "description": "An AI-powered stickman video generator and storyboard creator.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

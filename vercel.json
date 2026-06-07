@@ -1,0 +1,32 @@
+{
+  "buildCommand": "vite build",
+  "outputDirectory": "dist",
+  "installCommand": "npm install",
+  "framework": null,
+  "rewrites": [
+    { "source": "/api/health", "destination": "/api/health" },
+    { "source": "/api/generate-titles", "destination": "/api/generate-titles" },
+    { "source": "/api/generate-outline", "destination": "/api/generate-outline" },
+    { "source": "/api/generate-script", "destination": "/api/generate-script" },
+    { "source": "/api/generate-image", "destination": "/api/generate-image" },
+    { "source": "/api/generate-audio", "destination": "/api/generate-audio" },
+    { "source": "/api/rewrite-voiceover", "destination": "/api/rewrite-voiceover" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ],
+  "functions": {
+    "api/**/*.ts": {
+      "runtime": "@vercel/node@5",
+      "maxDuration": 60
+    }
+  },
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        { "key": "Access-Control-Allow-Origin", "value": "*" },
+        { "key": "Access-Control-Allow-Methods", "value": "GET,POST,OPTIONS" },
+        { "key": "Access-Control-Allow-Headers", "value": "Content-Type, Authorization" }
+      ]
+    }
+  ]
+}
