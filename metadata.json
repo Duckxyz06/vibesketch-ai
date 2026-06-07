@@ -1,6 +1,5 @@
 {
-  "name": "VibeSketch AI",
-  "description": "An AI-powered stickman video generator and storyboard creator.",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+  "name": "Remix: 103820 - ShareVIP - VibeSketch AI - V2 - KHÔNG XOÁ",
+  "description": "Automated viral storytelling video creator with hand-drawn doodle aesthetics.",
+  "requestFramePermissions": []
 }
