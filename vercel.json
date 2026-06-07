@@ -2,7 +2,6 @@
   "buildCommand": "vite build",
   "outputDirectory": "dist",
   "installCommand": "npm install",
-  "framework": null,
   "rewrites": [
     { "source": "/api/health", "destination": "/api/health" },
     { "source": "/api/generate-titles", "destination": "/api/generate-titles" },
@@ -13,12 +12,6 @@
     { "source": "/api/rewrite-voiceover", "destination": "/api/rewrite-voiceover" },
     { "source": "/(.*)", "destination": "/index.html" }
   ],
-  "functions": {
-    "api/**/*.ts": {
-      "runtime": "@vercel/node@5",
-      "maxDuration": 60
-    }
-  },
   "headers": [
     {
       "source": "/api/(.*)",

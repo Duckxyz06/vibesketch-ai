@@ -1,116 +1,146 @@
 # VibeSketch AI 🎨
 
-Tạo video viral phong cách stickman/doodle bằng AI — hoàn toàn miễn phí với Gemini API.
+Tạo video viral phong cách stickman/doodle bằng AI — dùng Gemini API (miễn phí).
 
 ---
 
-## 🚀 Deploy lên Vercel (Khuyến nghị)
+## 🚀 Deploy lên Vercel qua GitHub Actions
 
-### Bước 1 — Chuẩn bị
+Cách này tự động deploy mỗi khi bạn push code lên GitHub — không cần làm tay.
 
-1. Tạo tài khoản **[Vercel](https://vercel.com)** (miễn phí)
-2. Lấy **Gemini API Key** tại [aistudio.google.com/apikey](https://aistudio.google.com/apikey) (miễn phí)
-3. Cài **Vercel CLI**: `npm i -g vercel`
+---
 
-### Bước 2 — Push code lên GitHub
+### BƯỚC 1 — Lấy Gemini API Key
 
+1. Vào **[aistudio.google.com/apikey](https://aistudio.google.com/apikey)**
+2. Click **"Create API key"** → copy key (dạng `AIza...`)
+
+---
+
+### BƯỚC 2 — Tạo project trên Vercel
+
+1. Vào **[vercel.com](https://vercel.com)** → đăng nhập / đăng ký (miễn phí)
+2. Click **"Add New Project"** → chọn **"Continue with GitHub"**
+3. Kéo xuống, chọn **"Import Third-Party Git Repository"** hoặc tạo project trống:
+   - Vào **Settings → Tokens**
+   - Click **"Create Token"** → đặt tên `github-actions` → copy token
+
+> **Lưu lại 3 thứ sau** (cần cho bước 4):
+> - `VERCEL_TOKEN` — token vừa tạo
+> - `VERCEL_ORG_ID` — vào Vercel → Settings → General → **Team ID** (hoặc User ID)
+> - `VERCEL_PROJECT_ID` — tạo project trong Vercel → Settings → **Project ID**
+
+**Cách lấy nhanh ORG_ID và PROJECT_ID:**
 ```bash
-git init
-git add .
-git commit -m "Initial commit - VibeSketch AI"
+npm i -g vercel
+vercel login
+vercel link   # chạy trong thư mục dự án, nó tự tạo file .vercel/project.json
+cat .vercel/project.json
+# → {"orgId":"xxx","projectId":"yyy"}
 ```
 
-Tạo repo mới trên GitHub, rồi:
+---
+
+### BƯỚC 3 — Thêm GEMINI_API_KEY vào Vercel
+
+1. Vào project trên Vercel → **Settings → Environment Variables**
+2. Thêm:
+   - **Name**: `GEMINI_API_KEY`
+   - **Value**: key Gemini của bạn (`AIza...`)
+   - **Environments**: ✅ Production ✅ Preview ✅ Development
+3. Click **Save**
+
+---
+
+### BƯỚC 4 — Thêm Secrets vào GitHub
+
+1. Tạo repo GitHub mới tại **[github.com/new](https://github.com/new)**
+2. Vào repo → **Settings → Secrets and variables → Actions**
+3. Click **"New repository secret"**, thêm lần lượt 3 secrets:
+
+| Secret Name | Giá trị |
+|-------------|---------|
+| `VERCEL_TOKEN` | Token lấy từ Vercel Settings → Tokens |
+| `VERCEL_ORG_ID` | Team/User ID từ Vercel Settings → General |
+| `VERCEL_PROJECT_ID` | Project ID từ Vercel Project → Settings |
+
+---
+
+### BƯỚC 5 — Push code & Deploy tự động
 
 ```bash
-git remote add origin https://github.com/YOUR_USERNAME/vibesketch-ai.git
+# Trong thư mục dự án này:
+git init
+git add .
+git commit -m "feat: VibeSketch AI initial commit"
+git branch -M main
+git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPO.git
 git push -u origin main
 ```
 
-### Bước 3 — Deploy lên Vercel
+GitHub Actions sẽ tự động chạy → build → deploy lên Vercel.
 
-#### Option A: Vercel Dashboard (dễ nhất)
+Theo dõi tiến trình tại: **GitHub repo → tab "Actions"**
 
-1. Vào [vercel.com/new](https://vercel.com/new)
-2. **Import** repo GitHub vừa tạo
-3. **Framework Preset**: chọn **Other** (không phải Next.js)
-4. **Build Command**: `npm run build`
-5. **Output Directory**: `dist`
-6. **Install Command**: `npm install`
-7. Click **"Add Environment Variables"**:
-   - Key: `GEMINI_API_KEY`
-   - Value: dán API key Gemini của bạn
-8. Click **Deploy** → chờ ~2 phút
-
-#### Option B: Vercel CLI
-
-```bash
-# Trong thư mục dự án:
-vercel login
-vercel
-# → Trả lời các câu hỏi, chọn "Other" framework
-# → Sau đó thêm env var:
-vercel env add GEMINI_API_KEY
-# Nhập API key, chọn môi trường: Production, Preview, Development
-vercel --prod
-```
-
-### Bước 4 — Kiểm tra sau deploy
-
-Mở URL Vercel vừa tạo (ví dụ: `https://vibesketch-ai.vercel.app`).
-
-Kiểm tra API hoạt động: `https://your-app.vercel.app/api/health`
-
-Phải trả về: `{"status":"active","hasDefaultGeminiKey":true,...}`
+Sau ~2 phút, app live tại: `https://YOUR_PROJECT.vercel.app`
 
 ---
 
-## 💻 Chạy Local (Development)
+### Kiểm tra sau deploy
 
-```bash
-# 1. Clone / giải nén dự án
-cd vibesketch-ai
+```
+https://your-app.vercel.app/api/health
+```
+Phải trả về: `{"status":"active","hasDefaultGeminiKey":true}`
 
-# 2. Cài dependencies
-npm install
+---
 
-# 3. Tạo file .env.local
-cp .env.example .env.local
-# Mở .env.local và điền GEMINI_API_KEY=your_key_here
+## 🔄 Workflow tự động
 
-# 4. Chạy dev server
-npm run dev
-# → Mở http://localhost:3000
+```
+Bạn push code lên GitHub (branch main)
+        ↓
+GitHub Actions chạy (.github/workflows/deploy.yml)
+        ↓
+  1. Checkout code
+  2. Setup Node.js 20
+  3. npm ci (install deps)
+  4. Type check
+  5. npm run build (Vite build)
+  6. Deploy lên Vercel --prod
+        ↓
+App live trên Vercel ✅
 ```
 
-> **Lưu ý local**: Khi chạy `npm run dev`, Express server (`server.ts`) phục vụ cả API + frontend.
-> Vercel dùng `api/*.ts` serverless functions thay thế.
+**Pull Request** → tự động tạo **Preview URL** để test trước khi merge.
+
+---
+
+## 💻 Chạy Local
+
+```bash
+# 1. Cài dependencies
+npm install
+
+# 2. Tạo .env.local
+cp .env.example .env.local
+# Điền: GEMINI_API_KEY=your_key_here
+
+# 3. Chạy
+npm run dev
+# → http://localhost:3000
+```
 
 ---
 
 ## ⚙️ Cấu hình trong App
 
-Sau khi mở app, vào **Settings (⚙)** để nhập:
+Vào **Settings (⚙)** trong app để nhập:
 
 | Field | Mô tả |
 |-------|-------|
-| **Gemini API Key** | Key chính cho text + image + audio |
-| **Groq API Key** | (Tuỳ chọn) Cho Whisper caption sync |
-
-> Nếu đã set `GEMINI_API_KEY` ở Vercel env, người dùng **không cần** nhập key — app dùng server key mặc định.
-> Nhập key trong Settings sẽ **override** server key (user dùng key riêng của mình).
-
----
-
-## 🤖 Các Model Gemini Dùng
-
-| Chức năng | Model |
-|-----------|-------|
-| Tạo tiêu đề / kịch bản | `gemini-2.5-flash` |
-| Vẽ hình ảnh cảnh | `gemini-2.0-flash-preview-image-generation` |
-| Giọng đọc TTS | `gemini-2.5-flash-preview-tts` |
-
-> Tất cả model trên đều có trong **free tier** Gemini API (có rate limit).
+| **Gemini API Key** | Dùng key riêng (override server key) |
+| **Groq API Key** | (Tuỳ chọn) Cho Whisper caption sync chính xác hơn |
 
 ---
 
@@ -118,44 +148,45 @@ Sau khi mở app, vào **Settings (⚙)** để nhập:
 
 ```
 vibesketch-ai/
-├── api/                        # Vercel Serverless Functions
-│   ├── _gemini.ts              # Helper dùng chung
-│   ├── health.ts               # GET /api/health
-│   ├── generate-titles.ts      # POST /api/generate-titles
-│   ├── generate-outline.ts     # POST /api/generate-outline
-│   ├── generate-script.ts      # POST /api/generate-script
-│   ├── generate-image.ts       # POST /api/generate-image
-│   ├── generate-audio.ts       # POST /api/generate-audio
-│   └── rewrite-voiceover.ts    # POST /api/rewrite-voiceover
+├── .github/
+│   └── workflows/
+│       └── deploy.yml          ← GitHub Actions pipeline
+├── api/                        ← Vercel Serverless Functions
+│   ├── _gemini.ts              ← Gemini client helper
+│   ├── health.ts
+│   ├── generate-titles.ts
+│   ├── generate-outline.ts
+│   ├── generate-script.ts
+│   ├── generate-image.ts
+│   ├── generate-audio.ts
+│   └── rewrite-voiceover.ts
 ├── src/
-│   ├── App.tsx                 # React app chính
-│   ├── types.ts                # TypeScript types
-│   ├── data/
-│   │   ├── characters.ts       # 20+ nhân vật doodle
-│   │   └── topics.ts           # Gợi ý chủ đề
-│   └── index.css
-├── server.ts                   # Express server (chỉ dùng local dev)
-├── vercel.json                 # Vercel config
-├── vite.config.ts              # Vite build config
-├── package.json
-└── .env.example                # Template env vars
+│   ├── App.tsx                 ← React app chính (1500+ dòng)
+│   ├── types.ts
+│   └── data/
+│       ├── characters.ts       ← 20+ nhân vật doodle
+│       └── topics.ts
+├── server.ts                   ← Express (chỉ dùng local dev)
+├── vercel.json                 ← Vercel config + rewrites
+├── vite.config.ts
+└── package.json
 ```
 
 ---
 
 ## ❓ Troubleshooting
 
-**API trả về lỗi "API key chưa được cấu hình"**
-→ Kiểm tra `GEMINI_API_KEY` đã được thêm vào Vercel Environment Variables chưa. Sau khi thêm phải **Redeploy**.
+**GitHub Actions thất bại ở bước Deploy**
+→ Kiểm tra lại 3 secrets: `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID` đã đúng chưa.
+
+**`hasDefaultGeminiKey: false` sau deploy**
+→ Chưa thêm `GEMINI_API_KEY` vào Vercel Environment Variables. Thêm xong phải **Redeploy**.
 
 **Hình ảnh không tạo được**
-→ Model `gemini-2.0-flash-preview-image-generation` cần được kích hoạt trong Google AI Studio. Vào [aistudio.google.com](https://aistudio.google.com) → thử generate image 1 lần.
+→ Model `gemini-2.0-flash-preview-image-generation` cần kích hoạt. Vào [aistudio.google.com](https://aistudio.google.com) thử generate 1 ảnh là unlock.
 
-**Audio không tạo được**
-→ `gemini-2.5-flash-preview-tts` hiện đang preview, đôi khi rate limit. Thử lại sau vài giây.
+**Build lỗi `Cannot find module '@vercel/node'`**
+→ Chạy `npm install` lại. Package đã có trong `package.json`.
 
-**Build lỗi trên Vercel**
-→ Đảm bảo Node.js version ≥ 20. Trong Vercel Dashboard: Settings → General → Node.js Version → chọn `20.x`.
-
-**Functions timeout**
-→ `vercel.json` đã set `maxDuration: 60` (giây). Nếu vẫn timeout, nâng lên `300` (cần Vercel Pro).
+**Functions timeout (>10s)**
+→ Vercel free tier giới hạn 10s. `vercel.json` đã set `maxDuration: 60` nhưng cần **Vercel Pro** để vượt 10s. Nâng cấp hoặc dùng Gemini Flash (nhanh hơn).
